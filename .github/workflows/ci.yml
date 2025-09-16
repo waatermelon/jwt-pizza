@@ -18,16 +18,16 @@ jobs:
         with:
           node-version: 'latest'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies and build
+        run: |
+          npm ci && npm run build
+          cp dist/index.html dist/404.html
 
-      - name: Build application
-        run: npm run build
 
       - name: Update pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/
+          path: dist/
   
   deploy:
     needs: build
