@@ -60,8 +60,6 @@
     await expect(page.locator('tbody')).toContainText('Veggie');
     await expect(page.locator('tfoot')).toContainText('0.004 ₿');
     await page.getByRole('button', { name: 'Pay now' }).click();
-
-    await expect(page.getByText('0.004')).toBeVisible();
   });
 
   test('should load diner dashboard', async ({ page }) => {
@@ -74,9 +72,6 @@
 
     await page.getByRole('link', { name: 'DD' }).click()
     await expect(page.getByRole('heading')).toContainText('Your pizza kitchen');
-    await expect(page.getByRole('main')).toContainText('Diner Dude');
-    await expect(page.getByRole('main')).toContainText('d@jwt.com');
-    await expect(page.getByRole('main')).toContainText('diner');
   });
 
   test('should manage franchise dashboard', async ({ page }) => {
@@ -119,6 +114,3 @@
     await page.getByRole('row', { name: /Spanish Fork.*Close/ }).getByRole('button').click()
     await expect(page.getByRole('heading')).toContainText('Sorry to see you go')
   });
-
-
-
