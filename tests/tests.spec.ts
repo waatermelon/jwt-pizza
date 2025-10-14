@@ -102,7 +102,6 @@
     await expect(page.locator('h2')).toContainText("Mama Ricci's kitchen");
 
     await page.getByRole('textbox', { name: 'Filter franchises' }).fill('Ligma');
-    await page.getByRole('button', { name: 'Submit' }).click();
 
     await page.getByRole('button', { name: 'Add Franchise' }).click();
     await expect(page.getByRole('heading')).toContainText('Create franchise');
