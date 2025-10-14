@@ -41,14 +41,15 @@ test('updateUser', async ({ page }) => {
 
 });
 
-test("should list users", async ({ page }) => {
-    await basicInit(page);
+test("should list and delete users", async ({ page }) => {
+  await basicInit(page);
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill("a@jwt.com");
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
 
+  await page.getByRole('button', { name: 'Login' }).click();
 
-});
-
-test("should delete user", async ({ page }) => {
-    await basicInit(page);
-
-    
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await page.getByRole('heading', { name: 'Users' });
+  await page.getByRole('button', { name: 'Delete' }).nth(0).click();
 });
