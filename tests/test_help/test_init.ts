@@ -203,7 +203,6 @@ export async function basicInit(page: Page) {
     const limit = Number(url.searchParams.get('limit') || '10');
     const nameFilter = url.searchParams.get('name') || '*';
 
-    // simple filter and pagination
     let filteredUsers = Object.values(users).filter(u =>
       nameFilter === '*' || u.name?.toLowerCase().includes(nameFilter.replace(/\*/g, '').toLowerCase())
     );
@@ -215,16 +214,13 @@ export async function basicInit(page: Page) {
     await route.fulfill({ json: { users: pagedUsers, more } });
   });
 
-  // DELETE /api/user/:userId
   await page.route(/\/api\/user\/\d+$/, async (route) => {
     const userId = route.request().url().split('/').pop()!;
-    // allow only self or admin
     if (currUser.id !== userId && !currUser.roles?.some(r => r.role === Role.Admin)) {
       await route.fulfill({ status: 403, json: { message: 'unauthorized' } });
       return;
     }
 
-    // delete user from in-memory DB
     for (const key in users) {
       if (users[key].id === userId) {
         delete users[key];
@@ -232,7 +228,31 @@ export async function basicInit(page: Page) {
       }
     }
 
-    await route.fulfill({ status: 204, body: '' }); // no content
+    await route.fulfill({ status: 204, body: '' });
+  });
+
+  await page.route(/\/api\/user\/\d+$/, async (route) => {
+    if (route.request().method() !== 'PUT') {
+      return route.continue();
+    }
+
+    const userId = route.request().url().split('/').pop()!;
+    const body = route.request().postDataJSON();
+    if (currUser.id !== userId && !currUser.roles?.some(r => r.role === Role.Admin)) {
+      await route.fulfill({ status: 403, json: { message: 'unauthorized' } });
+      return;
+    }
+
+    for (const key in users) {
+      if (users[key].id === userId) {
+        users[key] = { ...users[key], ...body };
+        currUser = users[key];
+        await route.fulfill({ json: { user: users[key], token: 'token lol' } });
+        return;
+      }
+    }
+
+    await route.fulfill({ status: 404, json: { message: 'user not found' } });
   });
 
   await page.goto('/');
