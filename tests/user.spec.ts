@@ -47,4 +47,5 @@ test("should list and delete users", async ({ page }) => {
   await page.getByRole('link', { name: 'Admin' }).click();
   await page.getByRole('heading', { name: 'Users' });
   await page.getByRole('button', { name: 'Delete' }).nth(0).click();
+  // update pipline
 });
